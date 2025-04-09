@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -105,7 +104,7 @@ const HomePage: React.FC = () => {
 
       <footer className="py-8 px-4 mt-auto">
         <div className="max-w-7xl mx-auto text-center text-sm text-gray-500">
-          <p>© 2025 ABCid Portal. All rights reserved.</p>
+          <p>© 2023 ABCid Portal. All rights reserved.</p>
         </div>
       </footer>
     </div>

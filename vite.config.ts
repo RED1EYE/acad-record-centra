@@ -20,4 +20,7 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  // The base URL is important for GitHub Pages deployment
+  // You'll need to replace this with your actual repository name when deploying
+  base: process.env.NODE_ENV === 'production' ? '/acad-record-central/' : '/',
 }));
