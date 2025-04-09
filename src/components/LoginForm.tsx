@@ -10,6 +10,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader } from 'lucide-react';
 import { UserRole, useAuth } from '@/contexts/AuthContext';
+import ForgotPassword from './ForgotPassword';
+import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -26,8 +28,10 @@ interface LoginFormProps {
 const LoginForm: React.FC<LoginFormProps> = ({ role, redirectTo }) => {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { toast } = useToast();
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -43,6 +47,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ role, redirectTo }) => {
     
     try {
       await login(data.email, data.password, role);
+      toast({
+        title: 'Login successful',
+        description: `Welcome back! You've been logged in successfully.`,
+      });
       navigate(redirectTo);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred during login');
@@ -50,6 +58,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ role, redirectTo }) => {
       setIsSubmitting(false);
     }
   };
+
+  if (showForgotPassword) {
+    return <ForgotPassword onBack={() => setShowForgotPassword(false)} />;
+  }
 
   return (
     <Form {...form}>
@@ -84,6 +96,14 @@ const LoginForm: React.FC<LoginFormProps> = ({ role, redirectTo }) => {
                 <Input type="password" placeholder="********" {...field} />
               </FormControl>
               <FormMessage />
+              <Button
+                variant="link"
+                className="p-0 h-auto font-normal text-xs"
+                type="button"
+                onClick={() => setShowForgotPassword(true)}
+              >
+                Forgot password?
+              </Button>
             </FormItem>
           )}
         />

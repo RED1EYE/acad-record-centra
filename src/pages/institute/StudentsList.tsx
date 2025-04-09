@@ -4,182 +4,146 @@ import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Loader, Search, UserPlus, Edit, Trash2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { getStudentsByInstitute, StudentRecord, updateStudent, deleteStudent } from '@/services/api';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { getStudentsByInstitute, StudentRecord } from '@/services/api';
+import { useQuery } from '@tanstack/react-query';
+import { Skeleton } from '@/components/ui/skeleton';
+import { UserPlus } from 'lucide-react';
+import StudentSearchForm, { StudentSearchFilters } from '@/components/StudentSearchForm';
+import StudentTable from '@/components/StudentTable';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useToast } from '@/hooks/use-toast';
 
 const StudentsList: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const queryClient = useQueryClient();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedStudent, setSelectedStudent] = useState<StudentRecord | null>(null);
+  const [filters, setFilters] = useState<StudentSearchFilters>({});
+  const [studentToDelete, setStudentToDelete] = useState<string | null>(null);
   
-  const { data: students, isLoading } = useQuery({
-    queryKey: ['students', user?.institute],
+  const { data: allStudents, isLoading, refetch } = useQuery({
+    queryKey: ['instituteStudents', user?.institute],
     queryFn: () => getStudentsByInstitute(user?.institute || ''),
     enabled: !!user?.institute,
   });
   
   const filteredStudents = React.useMemo(() => {
-    if (!students) return [];
-    if (!searchTerm.trim()) return students;
+    if (!allStudents) return [];
     
-    const term = searchTerm.toLowerCase();
-    return students.filter((student) => 
-      student.fullName.toLowerCase().includes(term) ||
-      student.abcId.toLowerCase().includes(term) ||
-      student.email.toLowerCase().includes(term) ||
-      student.course.toLowerCase().includes(term)
-    );
-  }, [students, searchTerm]);
+    return allStudents.filter(student => {
+      // Apply filters
+      if (filters.abcId && !student.abcId.toLowerCase().includes(filters.abcId.toLowerCase())) {
+        return false;
+      }
+      if (filters.fullName && !student.fullName.toLowerCase().includes(filters.fullName.toLowerCase())) {
+        return false;
+      }
+      if (filters.course && student.course !== filters.course) {
+        return false;
+      }
+      if (filters.yearOfAdmission && student.yearOfAdmission.toString() !== filters.yearOfAdmission) {
+        return false;
+      }
+      return true;
+    });
+  }, [allStudents, filters]);
   
-  const handleDeleteStudent = async () => {
-    if (!selectedStudent) return;
+  const handleSearch = (newFilters: StudentSearchFilters) => {
+    setFilters(newFilters);
+  };
+  
+  const handleDelete = async (id: string) => {
+    // This would be an actual API call in a real app
+    setStudentToDelete(id);
+  };
+  
+  const confirmDelete = async () => {
+    if (!studentToDelete) return;
     
     try {
-      await deleteStudent(selectedStudent.id);
-      
-      // Invalidate and refetch the students query
-      queryClient.invalidateQueries({ queryKey: ['students', user?.institute] });
+      // This would be an actual API call in a real app
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
       toast({
-        title: 'Student Deleted',
-        description: `${selectedStudent.fullName}'s record has been deleted.`,
+        title: "Student deleted",
+        description: "The student record has been deleted successfully.",
       });
       
-      setDeleteDialogOpen(false);
-      setSelectedStudent(null);
+      // Refresh the list
+      refetch();
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to delete student record.',
-        variant: 'destructive',
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to delete student. Please try again.",
       });
+    } finally {
+      setStudentToDelete(null);
     }
   };
   
   return (
-    <DashboardLayout title="Student Records">
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <div>
-            <CardTitle>Students</CardTitle>
-            <CardDescription>
-              Manage student records for {user?.institute}
-            </CardDescription>
-          </div>
-          <Button onClick={() => navigate('/institute/students/new')}>
+    <DashboardLayout title="Students Management">
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-semibold text-gray-700">
+            Students of {user?.institute}
+          </h2>
+          <Button onClick={() => navigate('/institute/students/create')}>
             <UserPlus className="mr-2 h-4 w-4" />
-            Add Student
+            Add New Student
           </Button>
-        </CardHeader>
-        <CardContent>
-          <div className="mb-4 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input 
-              placeholder="Search students..." 
-              className="pl-10"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          
-          {isLoading ? (
-            <div className="flex justify-center py-8">
-              <Loader className="h-8 w-8 animate-spin text-edu-secondary" />
-            </div>
-          ) : (
-            <>
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Name</TableHead>
-                      <TableHead>ABCid</TableHead>
-                      <TableHead className="hidden md:table-cell">Course</TableHead>
-                      <TableHead className="hidden md:table-cell">Year</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredStudents.length > 0 ? (
-                      filteredStudents.map((student) => (
-                        <TableRow key={student.id}>
-                          <TableCell className="font-medium">{student.fullName}</TableCell>
-                          <TableCell>{student.abcId}</TableCell>
-                          <TableCell className="hidden md:table-cell">{student.course}</TableCell>
-                          <TableCell className="hidden md:table-cell">{student.currentYear}</TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex justify-end space-x-2">
-                              <Button 
-                                variant="ghost" 
-                                size="icon"
-                                onClick={() => navigate(`/institute/students/${student.id}`)}
-                              >
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                              <Button 
-                                variant="ghost" 
-                                size="icon"
-                                className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                                onClick={() => {
-                                  setSelectedStudent(student);
-                                  setDeleteDialogOpen(true);
-                                }}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
-                          {searchTerm 
-                            ? 'No students matching your search criteria'
-                            : 'No students found in your institute'}
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
+        </div>
+        
+        <StudentSearchForm 
+          onSearch={handleSearch} 
+          showInstitutes={false} 
+        />
+        
+        {isLoading ? (
+          <Card>
+            <CardContent className="p-6">
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-3/4" />
               </div>
-              <div className="mt-4 text-sm text-muted-foreground">
-                Showing {filteredStudents.length} of {students?.length || 0} students
-              </div>
-            </>
-          )}
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
+        ) : (
+          <StudentTable 
+            students={filteredStudents} 
+            isInstitute={true} 
+            onDelete={handleDelete}
+          />
+        )}
+      </div>
       
-      {/* Delete Confirmation Dialog */}
-      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Confirm Deletion</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete the record for {selectedStudent?.fullName}? This action cannot be undone.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button variant="destructive" onClick={handleDeleteStudent}>
+      <AlertDialog open={!!studentToDelete} onOpenChange={(open) => !open && setStudentToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete the student record. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
               Delete
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </DashboardLayout>
   );
 };

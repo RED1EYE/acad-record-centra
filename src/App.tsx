@@ -20,6 +20,9 @@ import StudentDetails from "./pages/institute/StudentDetails";
 import StudentProfile from "./pages/student/Profile";
 import StudentsList from "./pages/institute/StudentsList";
 import StudentsSearch from "./pages/government/StudentsSearch";
+import CreateStudent from "./pages/institute/CreateStudent";
+import EditStudent from "./pages/institute/EditStudent";
+import StudentView from "./pages/government/StudentView";
 
 const queryClient = new QueryClient();
 
@@ -65,6 +68,16 @@ const App = () => (
                 <StudentDetails />
               </ProtectedRoute>
             } />
+            <Route path="/institute/students/create" element={
+              <ProtectedRoute allowedRoles={['institute']}>
+                <CreateStudent />
+              </ProtectedRoute>
+            } />
+            <Route path="/institute/students/:id/edit" element={
+              <ProtectedRoute allowedRoles={['institute']}>
+                <EditStudent />
+              </ProtectedRoute>
+            } />
             
             {/* Government Routes */}
             <Route path="/government/dashboard" element={
@@ -75,6 +88,11 @@ const App = () => (
             <Route path="/government/students" element={
               <ProtectedRoute allowedRoles={['government']}>
                 <StudentsSearch />
+              </ProtectedRoute>
+            } />
+            <Route path="/government/students/:id" element={
+              <ProtectedRoute allowedRoles={['government']}>
+                <StudentView />
               </ProtectedRoute>
             } />
             
