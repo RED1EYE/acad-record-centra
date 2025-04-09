@@ -1,11 +1,10 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { getStudentsByInstitute, StudentRecord } from '@/services/api';
+import { getStudentsByInstitute } from '@/services/api';
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
 import { UserPlus } from 'lucide-react';
@@ -47,10 +46,13 @@ const StudentsList: React.FC = () => {
       if (filters.fullName && !student.fullName.toLowerCase().includes(filters.fullName.toLowerCase())) {
         return false;
       }
-      if (filters.course && student.course !== filters.course) {
+      // Skip course filter if "All Courses" is selected
+      if (filters.course && filters.course !== 'all_courses' && student.course !== filters.course) {
         return false;
       }
-      if (filters.yearOfAdmission && student.yearOfAdmission.toString() !== filters.yearOfAdmission) {
+      // Skip year filter if "All Years" is selected
+      if (filters.yearOfAdmission && filters.yearOfAdmission !== 'all_years' && 
+          student.yearOfAdmission.toString() !== filters.yearOfAdmission) {
         return false;
       }
       return true;

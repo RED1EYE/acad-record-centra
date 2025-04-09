@@ -1,9 +1,9 @@
 
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { getAllStudents, StudentRecord } from '@/services/api';
+import { getAllStudents } from '@/services/api';
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ChevronLeft, ChevronRight, FileDown } from 'lucide-react';
@@ -18,9 +18,29 @@ const StudentsSearch: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState<StudentSearchFilters>({});
 
+  // Prepare API filters by transforming special values
+  const apiFilters = React.useMemo(() => {
+    const transformedFilters: any = { ...filters };
+    
+    // Transform special "all_*" values to empty strings for the API
+    if (transformedFilters.institute === 'all_institutes') {
+      transformedFilters.institute = '';
+    }
+    
+    if (transformedFilters.course === 'all_courses') {
+      transformedFilters.course = '';
+    }
+    
+    if (transformedFilters.yearOfAdmission === 'all_years') {
+      transformedFilters.yearOfAdmission = '';
+    }
+    
+    return transformedFilters;
+  }, [filters]);
+
   const { data, isLoading } = useQuery({
-    queryKey: ['governmentStudents', currentPage, filters],
-    queryFn: () => getAllStudents(currentPage, ITEMS_PER_PAGE, filters as any),
+    queryKey: ['governmentStudents', currentPage, apiFilters],
+    queryFn: () => getAllStudents(currentPage, ITEMS_PER_PAGE, apiFilters),
   });
 
   const students = data?.students || [];

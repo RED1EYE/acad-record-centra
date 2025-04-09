@@ -111,7 +111,7 @@ const StudentSearchForm: React.FC<StudentSearchFormProps> = ({
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="">All Institutes</SelectItem>
+                          <SelectItem value="all_institutes">All Institutes</SelectItem>
                           {institutes.map(institute => (
                             <SelectItem key={institute} value={institute}>
                               {institute}
@@ -141,7 +141,7 @@ const StudentSearchForm: React.FC<StudentSearchFormProps> = ({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="">All Courses</SelectItem>
+                        <SelectItem value="all_courses">All Courses</SelectItem>
                         {courses.map(course => (
                           <SelectItem key={course} value={course}>
                             {course}
@@ -170,7 +170,7 @@ const StudentSearchForm: React.FC<StudentSearchFormProps> = ({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="">All Years</SelectItem>
+                        <SelectItem value="all_years">All Years</SelectItem>
                         {years.map(year => (
                           <SelectItem key={year} value={year}>
                             {year}
