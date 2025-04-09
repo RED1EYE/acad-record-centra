@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { 
-  Graduation, Building2, LandmarkIcon, Users, User, LogOut, Menu, X, 
+  GraduationCap, Building2, LandmarkIcon, Users, User, LogOut, Menu, X, 
   Home, BarChart, FileText, Search, Settings
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -43,7 +43,7 @@ const getNavigationItems = (role: UserRole): NavigationItem[] => {
 const getRoleIcon = (role: UserRole) => {
   switch (role) {
     case 'student':
-      return <Graduation className="h-6 w-6" />;
+      return <GraduationCap className="h-6 w-6" />;
     case 'institute':
       return <Building2 className="h-6 w-6" />;
     case 'government':

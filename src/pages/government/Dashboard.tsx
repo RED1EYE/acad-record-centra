@@ -8,9 +8,11 @@ import { Users, School, BarChart, Search, FileDown } from 'lucide-react';
 import { getAllStudents, institutes } from '@/services/api';
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useToast } from '@/hooks/use-toast';
 
 const GovernmentDashboard: React.FC = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   
   const { data, isLoading } = useQuery({
     queryKey: ['allStudents'],

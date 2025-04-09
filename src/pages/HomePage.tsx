@@ -1,16 +1,14 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Graduation, Building2, LandmarkIcon } from 'lucide-react';
+import { GraduationCap, Building2, LandmarkIcon } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();
 
-  // Redirect authenticated users to their dashboard
   React.useEffect(() => {
     if (isAuthenticated && user) {
       if (user.role === 'student') {
@@ -27,7 +25,7 @@ const HomePage: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex flex-col">
       <header className="py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
         <div className="flex items-center space-x-2">
-          <Graduation className="h-8 w-8 text-edu-primary" />
+          <GraduationCap className="h-8 w-8 text-edu-primary" />
           <h1 className="text-2xl font-bold text-gray-900">
             ABC<span className="text-edu-primary">id</span> Portal
           </h1>
@@ -48,7 +46,7 @@ const HomePage: React.FC = () => {
           <Card className="shadow-lg hover:shadow-xl transition-shadow">
             <CardHeader className="text-center">
               <div className="mx-auto bg-edu-primary/10 p-3 rounded-full w-16 h-16 flex items-center justify-center mb-2">
-                <Graduation className="h-8 w-8 text-edu-primary" />
+                <GraduationCap className="h-8 w-8 text-edu-primary" />
               </div>
               <CardTitle>Student Login</CardTitle>
               <CardDescription>
