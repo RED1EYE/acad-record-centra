@@ -1,22 +1,33 @@
-# Welcome to your Lovable project
+
+# Academic Records Central System
 
 ## Project info
 
 **URL**: https://lovable.dev/projects/78a560fc-da66-410a-b1c3-5d78ef34ec9b
 
-## How can I edit this code?
+## About
 
-There are several ways of editing your application.
+This application is an academic records management system that allows different user types (Students, Institutes, and Government) to access and manage student academic records.
 
-**Use Lovable**
+## Features
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/78a560fc-da66-410a-b1c3-5d78ef34ec9b) and start prompting.
+- Student login to view and manage personal academic information
+- Institute login to manage student records
+- Government login to search and view all student records across institutions
+- Responsive design for all device types
 
-Changes made via Lovable will be committed automatically to this repo.
+## Technologies Used
 
-**Use your preferred IDE**
+- Vite
+- TypeScript
+- React
+- Tailwind CSS
+- shadcn/ui
+- TanStack Query
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Running Locally
+
+If you want to work locally using your own IDE, you can clone this repo and push changes.
 
 The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
@@ -36,38 +47,31 @@ npm i
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Deploying to GitHub Pages
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+To deploy this project to GitHub Pages:
 
-**Use GitHub Codespaces**
+1. Create a GitHub repository for your project
+2. Update the repository name in `vite.config.ts` if different from "acad-record-central"
+3. Push the code to your GitHub repository
+4. Install the gh-pages package:
+   ```
+   npm install --save-dev gh-pages
+   ```
+5. Add the following scripts to your package.json:
+   ```json
+   "predeploy": "npm run build",
+   "deploy": "gh-pages -d dist"
+   ```
+6. Add a homepage field to your package.json:
+   ```json
+   "homepage": "https://yourusername.github.io/acad-record-central"
+   ```
+7. Run the deploy command:
+   ```
+   npm run deploy
+   ```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+After deployment, your app will be available at: `https://yourusername.github.io/acad-record-central`
 
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/78a560fc-da66-410a-b1c3-5d78ef34ec9b) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes it is!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Note: When using GitHub Pages with React Router, you'll need to configure your routes to work with the GitHub Pages URL structure.
