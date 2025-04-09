@@ -1,9 +1,7 @@
 
 # Academic Records Central System
 
-## Project info
 
-**URL**: https://lovable.dev/projects/78a560fc-da66-410a-b1c3-5d78ef34ec9b
 
 ## About
 
