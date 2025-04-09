@@ -25,12 +25,17 @@ const CreateStudent: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      // Convert string values to appropriate types
+      // Convert string values to appropriate types and ensure all required fields are present
       const studentData = {
-        ...data,
+        fullName: data.fullName,
+        dob: data.dob,
+        gender: data.gender as 'Male' | 'Female' | 'Other',
         institute: user.institute,
+        course: data.course,
         yearOfAdmission: parseInt(data.yearOfAdmission),
         currentYear: parseInt(data.currentYear),
+        email: data.email,
+        contactNumber: data.contactNumber
       };
 
       await createStudent(studentData);
